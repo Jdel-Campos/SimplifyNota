@@ -1,22 +1,38 @@
 import jsPDF from "jspdf";
 
 export const generatePDF = async (data: {
-  description: string;
-  date: string;
   client: string;
   value: string;
   valueInWords: string;
-  signature: string;
+  jobDescription: string;
+  eventName: string;
+  eventDate: string;
+  eventLocation: string;
+  startTime: string;
+  endTime: string;
+  city: string;
 }) => {
   const doc = new jsPDF();
 
-  // Caminho para a imagem do papel timbrado
-  const img = "/public/papel-timbrado.jpg"; // Certifique-se de salvar a imagem aqui
-  const imgWidth = 210; // Largura do A4 em mm
-  const imgHeight = 297; // Altura do A4 em mm
+  const pageWidth = doc.internal.pageSize.getWidth(); 
+  const marginLeft = 20;
+  const marginRight = 190; 
+  const lineHeight = 10;
+
+  const headerHeight = 40; 
+  let currentHeight = headerHeight + 10; 
+
+  const img = "/letterhead-viva-events.jpg"; 
+  const imgWidth = 210; 
+  const imgHeight = 297; 
+
+  const addText = (text: string) => {
+    const lines = doc.splitTextToSize(text, pageWidth - marginLeft * 2);
+    doc.text(lines, marginLeft, currentHeight);
+    currentHeight += lines.length * lineHeight;
+  };
 
   try {
-    // Carregar a imagem como base64
     const response = await fetch(img);
     const blob = await response.blob();
     const reader = new FileReader();
@@ -24,27 +40,40 @@ export const generatePDF = async (data: {
     reader.onload = function () {
       const base64 = reader.result as string;
 
-      // Adicionar o papel timbrado como fundo
       doc.addImage(base64, "JPEG", 0, 0, imgWidth, imgHeight);
 
-      // Conteúdo do recibo
       doc.setFontSize(16);
-      doc.text("RECIBO DE PAGAMENTO", 20, 50);
+      doc.setFont("helvetica", "bold");
+      doc.text("RECIBO DE PAGAMENTO", pageWidth / 2, currentHeight, {
+        align: "center",
+      });
+      currentHeight += lineHeight + 10;
 
       doc.setFontSize(12);
-      doc.text(`REFERE-SE AO PAGAMENTO A ${data.client.toUpperCase()} NO VALOR DE R$ ${data.value}`, 20, 70);
-      doc.text(`(${data.valueInWords.toUpperCase()}).`, 20, 80);
-      doc.text(`${data.description.toUpperCase()}.`, 20, 90);
-      doc.text(`QUE OCORREU DIA ${new Date(data.date).toLocaleDateString("pt-BR")}.`, 20, 100);
+      doc.setFont("helvetica", "normal");
+
+      addText(
+        `Refere-se ao pagamento a ${data.client} no valor de R$ ${data.value} (${data.valueInWords}).`
+      );
+      addText(
+        `Foi realizado o trabalho de ${data.jobDescription}, referente ao evento ${data.eventName}, ocorrido no dia ${new Date(
+          data.eventDate
+        ).toLocaleDateString("pt-BR")} no local ${data.eventLocation}, das ${
+          data.startTime
+        } às ${data.endTime}.`
+      );
 
       const currentDate = new Date().toLocaleDateString("pt-BR");
-      doc.text(`BARBACENA, ${currentDate}`, 20, 120);
+      addText(`${data.city}, ${currentDate}`);
 
-      // Linha de assinatura
-      doc.line(20, 150, 120, 150);
-      doc.text("ASSINATURA", 20, 160);
+      currentHeight += 40; 
+      const signatureLineWidth = 80;
+      const signatureLineStart = (pageWidth - signatureLineWidth) / 2;
+      doc.line(signatureLineStart, currentHeight, signatureLineStart + signatureLineWidth, currentHeight);
+      currentHeight += 10;
 
-      // Salvar o PDF
+      doc.text("Assinatura", pageWidth / 2, currentHeight, { align: "center" });
+
       doc.save("recibo.pdf");
     };
 
