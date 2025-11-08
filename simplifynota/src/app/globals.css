@@ -2,20 +2,48 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Tokens rápidos */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: 246 246 248; /* cinza quase branco */
+  --card: 255 255 255;
+  --brand: 37 99 235; /* azul */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html, body {
+  height: 100%;
+  background: radial-gradient(1200px 800px at 80% -10%, rgba(37,99,235,0.20), transparent 40%),
+              radial-gradient(900px 600px at -10% 20%, rgba(59,130,246,0.18), transparent 40%),
+              rgb(var(--bg));
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+.container-app {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
+
+.card {
+  @apply bg-white/80 backdrop-blur shadow-lg rounded-2xl border border-white/40;
+}
+
+label.required::after {
+  content: " *";
+  color: #ef4444;
+}
+
+/* A4 210x297 — mantém proporção em qualquer largura */
+.a4 { position: relative; width: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); background: #fff; }
+.a4::before { content: ""; display: block; padding-top: 141.4286%; } /* 297/210 */
+.a4-inner { position: absolute; inset: 0; }
+
+
+/* Preenche a página A4 com o timbrado sem recorte */
+.letterhead-fill {
+  background-repeat: no-repeat;
+  background-position: top left;
+  background-size: 100% 100%; /* sem crop, sem bordas */
+}
+
+/* Alternativas (se quiser testar):
+.letterhead-contain { background-repeat:no-repeat; background-position:center top; background-size:contain; }
+.letterhead-cover   { background-repeat:no-repeat; background-position:center;     background-size:cover; }
+*/
+
