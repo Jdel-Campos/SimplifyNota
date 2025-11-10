@@ -1,9 +1,8 @@
 // shared/types/receipt.ts
 export type Receipt = {
-  // Campos base
-  client: string;            // compat: espelha payeeName
+  client: string;
   eventName: string;
-  value: string;             // pode vir formatado
+  value: string;
   rawValue?: string;
   eventDate: string;
   startTime: string;
@@ -13,11 +12,10 @@ export type Receipt = {
   jobDescription: string;
   valueInWords?: string;
 
-  // Cabeçalho
   receiptNumber?: string;
   issueDate?: string;
 
-  // Pagador (removido do form, mas pode existir no tipo se precisar no backend)
+  // Pagador (caso use)
   payerName?: string;
   payerCnpj?: string;
   payerIeIm?: string;
@@ -25,7 +23,7 @@ export type Receipt = {
   payerCity?: string;
   payerState?: string;
 
-  // Recebedor (visível no form)
+  // Recebedor (dados essenciais)
   payeeName?: string;
   payeeCpfCnpj?: string;
   payeeAddress?: string;
@@ -35,18 +33,60 @@ export type Receipt = {
   // Pagamento / Referências
   paymentDate?: string;
   paymentMethod?: string;
-  purchaseOrder?: string;    // OS interna
+  purchaseOrder?: string;
   costCenter?: string;
   internalRef?: string;
 
-  // Retenções (opcional – controladas por enableTaxes)
+  // Flags de UI
+  enableTaxes?: boolean;
+  enableSupplierDetails?: boolean;
+
+  // Retenções
   taxes?: {
     iss?: number | string;
     inss?: number | string;
     irrf?: number | string;
     other?: number | string;
   };
-  enableTaxes?: boolean;
 
   showNFNote?: boolean;
+
+  // -------- NOVO: Metadados avançados de fornecedor (tudo opcional) --------
+  supplier?: {
+    // Contatos
+    phone?: string;
+    email?: string;
+    contactName?: string;
+    emergencyContact?: string;
+
+    // Bancários
+    bank?: {
+      bankName?: string;
+      accountType?: "Corrente" | "Poupança";
+      agency?: string;
+      account?: string;
+      pixKey?: string;
+    };
+
+    // Inscrições
+    stateRegistration?: string;     // IE
+    municipalRegistration?: string; // IM
+
+    // Classificação
+    productServiceType?: string;
+
+    // Condições comerciais
+    paymentTerms?: string;    // ex.: À vista, 15 dias, 30 dias...
+    discountPolicy?: string;  // ex.: % ou descrição
+    previousDeals?: string;   // histórico breve
+
+    // NF
+    nfCnpj?: string;          // se diferente do CPF/CNPJ do recebedor
+    nfCity?: string;
+    nfNotes?: string;
+
+    // Disponibilidade
+    serviceHours?: string;    // horários
+    availability?: string;    // observações
+  };
 };
