@@ -1,11 +1,9 @@
+// features/generate-pdf/lib/generate-pdf.ts
 import jsPDF from "jspdf";
-import { formatCurrencyBR } from "@/shared/lib/currency";
 import type { Receipt } from "@/shared/types/receipt";
-import {
-  loadLetterheadA4DataURL,
-  LETTERHEAD_PATH,
-  SAFE_MM,
-} from "@/shared/lib/letterhead";
+import { parseCurrencyBR, formatCurrencyBR } from "@/shared/lib/currency";
+import { loadLetterheadA4DataURL, LETTERHEAD_PATH, SAFE_MM } from "@/shared/lib/letterhead";
+import { buildReceiptParagraphs } from "@/shared/lib/receipt-text";
 
 export const generatePDF = async (data: Receipt) => {
   const doc = new jsPDF({ unit: "mm", format: "a4" });
@@ -31,15 +29,21 @@ export const generatePDF = async (data: Receipt) => {
     y += lines.length * lineHeight;
   };
 
+  // Título
   add("RECIBO DE PAGAMENTO", { bold: true, center: true });
   y += 2;
 
-  const valor = formatCurrencyBR(data.value);
-  const dataBR = new Date(data.eventDate).toLocaleDateString("pt-BR");
-  add(`Refere-se ao pagamento a ${data.client} no valor de R$ ${valor} (${data.valueInWords}).`);
-  add(`Foi realizado o trabalho de ${data.jobDescription}, referente ao evento ${data.eventName}, ocorrido no dia ${dataBR} no local ${data.eventLocation}, das ${data.startTime} às ${data.endTime}.`);
-  add(`${data.city}, ${new Date().toLocaleDateString("pt-BR")}`);
+  const numeric = parseCurrencyBR(String(data.value));
+  const valorFmt = numeric !== null ? formatCurrencyBR(numeric) : String(data.value);
 
+  const paragraphs = buildReceiptParagraphs({ ...data, value: valorFmt });
+
+  // Se quiser incluir também o cabeçalho textual (Nº/Emissão), descomente:
+  // add(paragraphs[0]);
+
+  paragraphs.slice(1).forEach((txt) => add(txt));
+
+  // Assinatura
   y = Math.max(y + 16, pageHeight - bottom - 22);
   const lineWidth = 80;
   const xStart = (pageWidth - lineWidth) / 2;

@@ -2,48 +2,89 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Tokens rápidos */
+/* ====== Motion ====== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn { animation: fadeIn 0.6s ease-out; }
+
+/* ====== Design Tokens ====== */
 :root {
-  --bg: 246 246 248; /* cinza quase branco */
-  --card: 255 255 255;
-  --brand: 37 99 235; /* azul */
+  --bg: 246 246 248;       /* cinza quase branco */
+  --card: 255 255 255;     /* branco */
+  --brand: 37 99 235;      /* azul principal */
 }
 
+/* ====== Background global ====== */
 html, body {
   height: 100%;
-  background: radial-gradient(1200px 800px at 80% -10%, rgba(37,99,235,0.20), transparent 40%),
-              radial-gradient(900px 600px at -10% 20%, rgba(59,130,246,0.18), transparent 40%),
-              rgb(var(--bg));
+  background:
+    radial-gradient(1200px 800px at 80% -10%, rgba(37,99,235,0.20), transparent 40%),
+    radial-gradient(900px 600px at -10% 20%, rgba(59,130,246,0.18), transparent 40%),
+    rgb(var(--bg));
 }
 
+/* ====== Helpers de layout ====== */
 .container-app {
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
 
+/* Card “glass” para uso genérico (opcional; útil em conteúdos legados) */
 .card {
-  @apply bg-white/80 backdrop-blur shadow-lg rounded-2xl border border-white/40;
+  @apply bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20;
 }
 
+/* Sufixo visual para labels obrigatórias quando usar <label class="required"> */
 label.required::after {
   content: " *";
   color: #ef4444;
 }
 
-/* A4 210x297 — mantém proporção em qualquer largura */
-.a4 { position: relative; width: 100%; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.08); background: #fff; }
-.a4::before { content: ""; display: block; padding-top: 141.4286%; } /* 297/210 */
+/* ====== Preview A4 ====== */
+/* Mantém proporção 210x297 e aplica um contêiner com sombra e borda arredondada */
+/* Preview A4: ocupa 100% da largura disponível do card */
+.a4 {
+  position: relative;
+  width: 100%;
+  max-width: none;          /* sem limite artificial */
+  aspect-ratio: 1 / 1.4142; /* 210x297 */
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
 .a4-inner { position: absolute; inset: 0; }
-
 
 /* Preenche a página A4 com o timbrado sem recorte */
 .letterhead-fill {
   background-repeat: no-repeat;
   background-position: top left;
-  background-size: 100% 100%; /* sem crop, sem bordas */
+  background-size: 100% 100%;
 }
 
-/* Alternativas (se quiser testar):
-.letterhead-contain { background-repeat:no-repeat; background-position:center top; background-size:contain; }
-.letterhead-cover   { background-repeat:no-repeat; background-position:center;     background-size:cover; }
+/* Alternativas, caso queira experimentar outros comportamentos de imagem:
+.letterhead-contain { background-repeat: no-repeat; background-position: center top; background-size: contain; }
+.letterhead-cover   { background-repeat: no-repeat; background-position: center;     background-size: cover; }
 */
 
+/* ===== Live badge animations ===== */
+@keyframes liveBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .25; }
+}
+@keyframes livePing {
+  0%   { transform: scale(.9); opacity: .7; }
+  70%  { transform: scale(1.5); opacity: 0; }
+  100% { opacity: 0; }
+}
+/* aplica o brilho no ponto */
+.live-dot { animation: liveBlink 1s infinite; }
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 9999px;
+  border: 2px solid rgba(34,197,94,.5); /* green-500 */
+  animation: livePing 1.2s cubic-bezier(0,0,.2,1) infinite;
+}
