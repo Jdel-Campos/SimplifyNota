@@ -15,5 +15,4 @@ export async function getCurrentUser(): Promise<UserProfile | null> {
     city: "",
     state: "",
   };
-}
-
+};

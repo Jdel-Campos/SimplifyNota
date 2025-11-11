@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import { Button } from "@/shared/ui/button";
 import { X } from "lucide-react";
 
-// carrega o preview só quando abrir
 const ReceiptPreview = dynamic(
   () => import("./receipt-preview").then((m) => ({ default: m.ReceiptPreview })),
   { ssr: false }
@@ -19,7 +18,6 @@ type Props = {
 export function PreviewDialogTrigger({ label = "Ver preview", className }: Props) {
   const [open, setOpen] = useState(false);
 
-  // trava scroll do body quando modal estiver aberto
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -57,4 +55,4 @@ export function PreviewDialogTrigger({ label = "Ver preview", className }: Props
       )}
     </>
   );
-}
+};

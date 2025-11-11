@@ -1,4 +1,3 @@
-// src/shared/state/receipt-store.ts
 import { create } from "zustand";
 import type { Receipt } from "@/shared/types/receipt";
 

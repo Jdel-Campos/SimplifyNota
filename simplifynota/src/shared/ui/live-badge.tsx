@@ -1,4 +1,3 @@
-// shared/ui/live-badge.tsx
 "use client";
 
 import * as React from "react";
@@ -22,4 +21,4 @@ export function LiveBadge({ className, ...props }: Props) {
       Ao vivo
     </div>
   );
-}
+};

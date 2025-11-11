@@ -1,4 +1,3 @@
-// shared/lib/ids.ts
 export const pad = (n: number, size = 5) => String(n).padStart(size, "0");
 
 export const yyyy = (d = new Date()) => d.getFullYear();

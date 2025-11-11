@@ -1,4 +1,3 @@
-// shared/lib/cost-center.ts
 import { slugify } from "@/shared/lib/ids";
 
 const yyyymm = (d = new Date()) =>
@@ -6,13 +5,12 @@ const yyyymm = (d = new Date()) =>
 
 export const generateCostCenterLocal = (eventName?: string, eventDate?: string) => {
   const prefix = eventName
-    ? slugify(eventName).split("-")[0].toUpperCase().slice(0, 6) // pega 1ª palavra do evento
+    ? slugify(eventName).split("-")[0].toUpperCase().slice(0, 6)
     : "CC";
   const d = eventDate ? new Date(eventDate + "T00:00:00") : new Date();
   return `CC-${prefix}-${yyyymm(d)}`;
 };
 
-/** Tenta resolver no servidor; se falhar, cai para o gerador local. */
 export const resolveCostCenter = async (eventName?: string, eventDate?: string) => {
   try {
     const url = `/api/cost-center/resolve?eventName=${encodeURIComponent(eventName || "")}&eventDate=${encodeURIComponent(eventDate || "")}`;
@@ -22,5 +20,5 @@ export const resolveCostCenter = async (eventName?: string, eventDate?: string) 
     return (data?.costCenter as string) || generateCostCenterLocal(eventName, eventDate);
   } catch {
     return generateCostCenterLocal(eventName, eventDate);
-  }
+  };
 };

@@ -20,7 +20,6 @@ import {
 import { generateLocalOS, generateInternalRef } from "@/shared/lib/ids";
 import { resolveCostCenter } from "@/shared/lib/cost-center";
 
-// Helper para set nested path (supplier.xxx / supplier.bank.xxx / taxes.xxx)
 function setByPath<T extends Record<string, any>>(obj: T, path: string, value: any): T {
   const keys = path.split(".");
   const clone: any = { ...obj };
@@ -32,7 +31,7 @@ function setByPath<T extends Record<string, any>>(obj: T, path: string, value: a
   }
   cur[keys[keys.length - 1]] = value;
   return clone;
-}
+};
 
 type PayeeSeed = {
   name: string;
@@ -44,7 +43,6 @@ type PayeeSeed = {
 
 type Props = { initialPayee?: PayeeSeed };
 
-// Acordeão controlado
 type CollapsibleProps = {
   title: string;
   icon?: React.ComponentType<{ className?: string }>;
@@ -52,6 +50,7 @@ type CollapsibleProps = {
   onOpenChange: (open: boolean) => void;
   children: React.ReactNode;
 };
+
 function Collapsible({ title, icon: Icon, open, onOpenChange, children }: CollapsibleProps) {
   return (
     <details
@@ -67,7 +66,7 @@ function Collapsible({ title, icon: Icon, open, onOpenChange, children }: Collap
       <div className="px-4 pb-4 pt-2">{children}</div>
     </details>
   );
-}
+};
 
 export function ReceiptForm({ initialPayee }: Props) {
   const [formData, setFormData] = useState<Receipt>({
@@ -77,7 +76,6 @@ export function ReceiptForm({ initialPayee }: Props) {
     enableTaxes: false,
     enableSupplierDetails: false,
 
-    // Recebedor seed
     payeeName: initialPayee?.name ?? "",
     payeeCpfCnpj: initialPayee?.cpfCnpj ?? "",
     payeeAddress: initialPayee?.address ?? "",
@@ -86,8 +84,6 @@ export function ReceiptForm({ initialPayee }: Props) {
     client: initialPayee?.name ?? initialReceipt.client,
   });
   const [submitting, setSubmitting] = useState(false);
-
-  // Controle dos acordeões
   const [openMain, setOpenMain] = useState(true);
   const [openDate, setOpenDate] = useState(true);
   const [openLoc, setOpenLoc] = useState(true);
@@ -116,23 +112,22 @@ export function ReceiptForm({ initialPayee }: Props) {
         valueInWords: numeric !== null ? String(extenso(numeric, { mode: "currency" })) : "",
       });
       return;
-    }
+    };
 
     if (name === "payeeName") {
       sync({ ...formData, payeeName: value, client: value });
       return;
-    }
+    };
 
-    // nested: taxes.*, supplier.*, supplier.bank.*
     if (name.includes(".")) {
       sync(setByPath(formData, name, type === "checkbox" ? checked : value));
       return;
-    }
+    };
 
     if (type === "checkbox") {
       sync({ ...formData, [name]: checked });
       return;
-    }
+    };
 
     sync({ ...formData, [name]: value });
   };
@@ -140,25 +135,26 @@ export function ReceiptForm({ initialPayee }: Props) {
   const handleFocusValue = () => {
     sync({ ...formData, value: formData.rawValue || formData.value });
   };
+
   const handleBlurValue = () => {
     sync({ ...formData, value: formatCurrencyBR(formData.rawValue || formData.value) });
   };
+
   const handleBlurTax = (key: "iss" | "inss" | "irrf" | "other") => {
     const current = String((formData.taxes as any)?.[key] ?? "");
     const formatted = current ? formatCurrencyBR(current) : "";
     sync({ ...formData, taxes: { ...(formData.taxes ?? {}), [key]: formatted } });
   };
 
-  // toggles
   const toggleTaxes = (on: boolean) => {
     const next = { ...formData, enableTaxes: on };
     next.taxes = on ? (formData.taxes ?? {}) : undefined;
     sync(next);
   };
+
   const toggleSupplierDetails = (on: boolean) => {
     let next = { ...formData, enableSupplierDetails: on };
     if (!on) {
-      // limpa bloco avançado
       delete (next as any).supplier;
       next.payeeAddress = "";
       next.payeeCity = "";
@@ -169,7 +165,6 @@ export function ReceiptForm({ initialPayee }: Props) {
     sync(next);
   };
 
-  // automações
   const fetchReceiptNumber = async () => {
     try {
       const res = await fetch("/api/receipts/next-number", { cache: "no-store" });
@@ -197,7 +192,6 @@ export function ReceiptForm({ initialPayee }: Props) {
       if (!next.client && next.payeeName) next.client = next.payeeName;
       sync(next);
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -208,7 +202,6 @@ export function ReceiptForm({ initialPayee }: Props) {
         sync({ ...formData, internalRef: ref, costCenter: cc });
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.eventName, formData.eventDate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -262,19 +255,21 @@ export function ReceiptForm({ initialPayee }: Props) {
     }
   };
 
-  // Handlers para acordes: pagamento fecha os demais; abrir qualquer outro fecha o pagamento
   const onToggleMain = (open: boolean) => {
     setOpenMain(open);
     if (open && openPay) setOpenPay(false);
   };
+
   const onToggleDate = (open: boolean) => {
     setOpenDate(open);
     if (open && openPay) setOpenPay(false);
   };
+
   const onToggleLoc = (open: boolean) => {
     setOpenLoc(open);
     if (open && openPay) setOpenPay(false);
   };
+
   const onTogglePay = (open: boolean) => {
     setOpenPay(open);
     if (open) {
@@ -285,9 +280,7 @@ export function ReceiptForm({ initialPayee }: Props) {
   };
 
   return (
-    
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* 1) Informações Principais (Accordion) */}
       <Collapsible title="Informações Principais" icon={User} open={openMain} onOpenChange={onToggleMain}>
         <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-3 gap-5">
           <div className="group min-w-0">
@@ -366,7 +359,6 @@ export function ReceiptForm({ initialPayee }: Props) {
         </div>
       </Collapsible>
 
-      {/* 2) Data e Horário (Accordion) */}
       <Collapsible title="Data e Horário" icon={Calendar} open={openDate} onOpenChange={onToggleDate}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="group min-w-0 md:col-span-2">
@@ -399,7 +391,6 @@ export function ReceiptForm({ initialPayee }: Props) {
         </div>
       </Collapsible>
 
-      {/* 3) Localização (Accordion) */}
       <Collapsible title="Localização" icon={MapPin} open={openLoc} onOpenChange={onToggleLoc}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div className="group min-w-0">
@@ -429,7 +420,6 @@ export function ReceiptForm({ initialPayee }: Props) {
         </div>
       </Collapsible>
 
-      {/* 4) Descrição (fora dos acordeões, como você já tinha) */}
       <div className="space-y-3 pt-4 border-t border-gray-100">
         <Label className="required">
           <span className="inline-flex items-center gap-2">
@@ -448,7 +438,6 @@ export function ReceiptForm({ initialPayee }: Props) {
         />
       </div>
 
-      {/* 5) Pagamento & Preferências (Accordion controlado) */}
       <Collapsible title="Pagamento & Preferências" icon={CreditCard} open={openPay} onOpenChange={onTogglePay}>
         <div className="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-3 gap-4">
           <div className="group min-w-0">
@@ -464,10 +453,6 @@ export function ReceiptForm({ initialPayee }: Props) {
             <Label>Data do pagamento</Label>
             <Input type="date" name="paymentDate" value={formData.paymentDate ?? ""} onChange={handleInputChange} />
           </div>
-          {/* <div className="group min-w-0">
-            <Label>Referência Interna (auto)</Label>
-            <Input name="internalRef" value={formData.internalRef ?? ""} readOnly />
-          </div> */}
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-6">
@@ -490,10 +475,8 @@ export function ReceiptForm({ initialPayee }: Props) {
           </label>
         </div>
 
-        {/* Detalhes avançados do fornecedor */}
         {formData.enableSupplierDetails && (
           <div className="mt-4 space-y-4">
-            {/* Contatos */}
             <div>
               <div className="mb-2 font-medium text-gray-800 inline-flex items-center gap-2">
                 <Phone className="w-4 h-4 text-blue-600" /> Contatos
@@ -506,13 +489,11 @@ export function ReceiptForm({ initialPayee }: Props) {
               </div>
             </div>
 
-            {/* Bancários */}
             <div>
   <div className="mb-2 font-medium text-gray-800 inline-flex items-center gap-2">
     <Landmark className="w-4 h-4 text-blue-600" /> Dados bancários
   </div>
 
-  {/* 1 col no mobile, 2 col ≥ md */}
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
     <Input
       name="supplier.bank.bankName"
@@ -553,7 +534,6 @@ export function ReceiptForm({ initialPayee }: Props) {
   </div>
 </div>
 
-            {/* Inscrições */}
             <div>
               <div className="mb-2 font-medium text-gray-800 inline-flex items-center gap-2">
                 <Building2 className="w-4 h-4 text-blue-600" /> Inscrições
@@ -567,7 +547,6 @@ export function ReceiptForm({ initialPayee }: Props) {
               </div>
             </div>
 
-            {/* Classificação */}
             <div>
               <div className="mb-2 font-medium text-gray-800 inline-flex items-center gap-2">
                 <Tag className="w-4 h-4 text-blue-600" /> Classificação
@@ -577,7 +556,6 @@ export function ReceiptForm({ initialPayee }: Props) {
               </div>
             </div>
 
-            {/* Condições comerciais */}
             <div>
               <div className="mb-2 font-medium text-gray-800 inline-flex items-center gap-2">
                 <CalendarClock className="w-4 h-4 text-blue-600" /> Condições comerciais
@@ -598,38 +576,34 @@ export function ReceiptForm({ initialPayee }: Props) {
               </div>
             </div>
 
-            {/* NF */}
             <div>
-  <div className="mb-2 font-medium text-gray-800 inline-flex items-center gap-2">
-    <Mail className="w-4 h-4 text-blue-600" /> Dados para NF
-  </div>
+              <div className="mb-2 font-medium text-gray-800 inline-flex items-center gap-2">
+                <Mail className="w-4 h-4 text-blue-600" /> Dados para NF
+              </div>
 
-  {/* 1 col no mobile, 2 col ≥ md */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <Input
-      name="supplier.nfCnpj"
-      placeholder="CNPJ para NF (se diferente)"
-      value={formData.supplier?.nfCnpj ?? ""}
-      onChange={handleInputChange}
-    />
-    <Input
-      name="supplier.nfCity"
-      placeholder="Cidade para NF"
-      value={formData.supplier?.nfCity ?? ""}
-      onChange={handleInputChange}
-    />
-    <Input
-      name="supplier.nfNotes"
-      placeholder="Observações NF (opcional)"
-      value={formData.supplier?.nfNotes ?? ""}
-      onChange={handleInputChange}
-      className="md:col-span-2"
-    />
-  </div>
-</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  name="supplier.nfCnpj"
+                  placeholder="CNPJ para NF (se diferente)"
+                  value={formData.supplier?.nfCnpj ?? ""}
+                  onChange={handleInputChange}
+                />
+                <Input
+                  name="supplier.nfCity"
+                  placeholder="Cidade para NF"
+                  value={formData.supplier?.nfCity ?? ""}
+                  onChange={handleInputChange}
+                />
+                <Input
+                  name="supplier.nfNotes"
+                  placeholder="Observações NF (opcional)"
+                  value={formData.supplier?.nfNotes ?? ""}
+                  onChange={handleInputChange}
+                  className="md:col-span-2"
+                />
+              </div>
+            </div>
 
-
-            {/* Horários/Disponibilidade */}
             <div>
               <div className="mb-2 font-medium text-gray-800 inline-flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-blue-600" /> Horários & disponibilidade
@@ -642,7 +616,6 @@ export function ReceiptForm({ initialPayee }: Props) {
           </div>
         )}
 
-        {/* Retenções — somente quando habilitado */}
         {formData.enableTaxes && (
           <div className="mt-4">
             <div className="mb-2 font-medium text-gray-800 inline-flex items-center gap-2">
@@ -687,7 +660,6 @@ export function ReceiptForm({ initialPayee }: Props) {
         )}
       </Collapsible>
 
-      {/* CTA */}
       <div>
         <Button type="submit" disabled={submitting} className="w-full">
           {submitting ? "Gerando..." : "Gerar Recibo"}

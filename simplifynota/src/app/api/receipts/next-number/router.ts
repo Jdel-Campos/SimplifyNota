@@ -1,4 +1,3 @@
-// app/api/receipts/next-number/route.ts
 import { NextResponse } from "next/server";
 import { MongoClient } from "mongodb";
 import { formatReceiptNumber, yyyy } from "@/shared/lib/ids";
@@ -17,7 +16,7 @@ async function getClient() {
   client = new MongoClient(uri, { maxPoolSize: 3 });
   await client.connect();
   return client;
-}
+};
 
 export async function GET() {
   try {

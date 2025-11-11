@@ -1,4 +1,3 @@
-// shared/lib/receipt-text.ts
 import { formatCurrencyBR, parseCurrencyBR } from "@/shared/lib/currency";
 import type { Receipt } from "@/shared/types/receipt";
 
@@ -13,7 +12,7 @@ const futureByDate = (eventDate?: string) => {
   const ev = new Date(eventDate + "T00:00:00").getTime();
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-  return ev > today; // igual a hoje => passado
+  return ev > today;
 };
 
 export function buildReceiptParagraphs(d: Receipt): string[] {
@@ -81,4 +80,4 @@ export function buildReceiptParagraphs(d: Receipt): string[] {
 
   return [header, partes1, partes2, declaracao, corpo, pagamento, referencias, reten, cidadeData, notaFiscalObs]
     .filter(Boolean);
-}
+};

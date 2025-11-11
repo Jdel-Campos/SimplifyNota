@@ -6,9 +6,8 @@ const options: MongoClientOptions = {};
 if (!uri) throw new Error("Defina MONGODB_URI no .env");
 
 declare global {
-    // eslint-disable-next-line no-var
     var _mongoClientPromise: Promise<MongoClient> | undefined;
-}
+};
 
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
@@ -22,7 +21,7 @@ if (process.env.NODE_ENV === "development") {
 } else {
     client = new MongoClient(uri, options);
     clientPromise = client.connect();
-}
+};
 
 const deriveDbName = () => {
     if (process.env.MONGODB_DB) return process.env.MONGODB_DB;

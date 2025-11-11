@@ -1,4 +1,3 @@
-// shared/types/receipt.ts
 export type Receipt = {
   client: string;
   eventName: string;
@@ -15,7 +14,6 @@ export type Receipt = {
   receiptNumber?: string;
   issueDate?: string;
 
-  // Pagador (caso use)
   payerName?: string;
   payerCnpj?: string;
   payerIeIm?: string;
@@ -23,25 +21,21 @@ export type Receipt = {
   payerCity?: string;
   payerState?: string;
 
-  // Recebedor (dados essenciais)
   payeeName?: string;
   payeeCpfCnpj?: string;
   payeeAddress?: string;
   payeeCity?: string;
   payeeState?: string;
 
-  // Pagamento / Referências
   paymentDate?: string;
   paymentMethod?: string;
   purchaseOrder?: string;
   costCenter?: string;
   internalRef?: string;
 
-  // Flags de UI
   enableTaxes?: boolean;
   enableSupplierDetails?: boolean;
 
-  // Retenções
   taxes?: {
     iss?: number | string;
     inss?: number | string;
@@ -51,15 +45,12 @@ export type Receipt = {
 
   showNFNote?: boolean;
 
-  // -------- NOVO: Metadados avançados de fornecedor (tudo opcional) --------
   supplier?: {
-    // Contatos
     phone?: string;
     email?: string;
     contactName?: string;
     emergencyContact?: string;
 
-    // Bancários
     bank?: {
       bankName?: string;
       accountType?: "Corrente" | "Poupança";
@@ -68,25 +59,20 @@ export type Receipt = {
       pixKey?: string;
     };
 
-    // Inscrições
-    stateRegistration?: string;     // IE
-    municipalRegistration?: string; // IM
+    stateRegistration?: string;
+    municipalRegistration?: string;
 
-    // Classificação
     productServiceType?: string;
 
-    // Condições comerciais
-    paymentTerms?: string;    // ex.: À vista, 15 dias, 30 dias...
-    discountPolicy?: string;  // ex.: % ou descrição
-    previousDeals?: string;   // histórico breve
+    paymentTerms?: string;
+    discountPolicy?: string;
+    previousDeals?: string;
 
-    // NF
-    nfCnpj?: string;          // se diferente do CPF/CNPJ do recebedor
+    nfCnpj?: string;
     nfCity?: string;
     nfNotes?: string;
 
-    // Disponibilidade
-    serviceHours?: string;    // horários
-    availability?: string;    // observações
+    serviceHours?: string;
+    availability?: string;
   };
 };

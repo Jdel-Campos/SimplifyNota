@@ -12,7 +12,6 @@ export const Button = ({ className, variant = "primary", ...props }: Props) => {
 
   const variants = {
     primary:
-      // gradiente + hover scale (Claude)
       "bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-3 shadow-lg " +
       "hover:shadow-xl hover:from-blue-700 hover:to-indigo-700 transform hover:scale-[1.02] active:scale-[0.98] " +
       "focus:ring-blue-600 focus:ring-offset-white",

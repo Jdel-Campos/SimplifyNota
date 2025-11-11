@@ -1,4 +1,4 @@
-// widgets/receipt-preview/receipt-preview.tsx
+
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
@@ -35,7 +35,6 @@ export function ReceiptPreview() {
 
   return (
     <div className="a4 relative rounded-2xl overflow-hidden shadow bg-white">
-      {/* timbrado */}
       <div
         className="a4-inner"
         style={{
@@ -46,7 +45,6 @@ export function ReceiptPreview() {
         }}
       />
 
-      {/* conteúdo (mantidos offsets) */}
       <div
         className="a4-inner relative z-10"
         style={{
@@ -56,14 +54,11 @@ export function ReceiptPreview() {
           paddingLeft: "6%",
         }}
       >
-        {/* Título */}
         <div className="text-center">
           <h2 className="text-[18px] font-bold tracking-wide pb-3">RECIBO DE PAGAMENTO</h2>
         </div>
 
-        {/* Cabeçalhos em caixas */}
         <div className="mt-3 grid grid-cols-2 gap-2 text-[12px]">
-          {/* Recebedor */}
           <div className="border border-gray-300 rounded-md p-2">
             <div className="grid grid-cols-5 gap-1">
               <span className="col-span-2 text-gray-600">Recebedor:</span>
@@ -82,7 +77,6 @@ export function ReceiptPreview() {
             </div>
           </div>
 
-          {/* Metadados / Pagamento */}
           <div className="border border-gray-300 rounded-md p-2">
             <div className="grid grid-cols-5 gap-1">
               <span className="col-span-2 text-gray-600">Nº Recibo:</span>
@@ -100,7 +94,6 @@ export function ReceiptPreview() {
           </div>
         </div>
 
-        {/* Evento */}
         <div className="mt-2 border border-gray-300 rounded-md p-2 text-[12px]">
           <div className="grid grid-cols-6 gap-1">
             <span className="text-gray-600 col-span-1">Evento:</span>
@@ -120,7 +113,6 @@ export function ReceiptPreview() {
           </div>
         </div>
 
-        {/* Tabela (1 item) */}
         <div className="mt-2 border border-gray-300 rounded-md overflow-hidden">
           <div className="grid grid-cols-12 text-[11.5px] font-semibold bg-gray-100 border-b border-gray-300">
             <div className="col-span-7 px-2 py-1.5">Descrição</div>
@@ -138,7 +130,6 @@ export function ReceiptPreview() {
             <div className="col-span-2 px-2 py-2 border-b border-gray-200 text-right">{fmt(gross)}</div>
           </div>
 
-          {/* Resumo/Referências */}
           <div className="grid grid-cols-12 text-[11.5px]">
             <div className="col-span-8 px-2 py-2 border-t border-gray-300">
               <div className="text-[11px] space-y-1">
@@ -173,9 +164,7 @@ export function ReceiptPreview() {
           </div>
         </div>
 
-        {/* Rodapé (cidade/data) + Assinatura */}
         <div className="pt-3 flex flex-col items-center">
-          {/* Assinatura — LINHA MAIOR */}
           <div className="mt-20">
 
             <hr className="my-2 border-gray-400 w-[350px]" />
@@ -198,4 +187,4 @@ export function ReceiptPreview() {
       </div>
     </div>
   );
-}
+};
